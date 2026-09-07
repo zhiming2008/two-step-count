@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "两步记账 · 京东收割",
+  "version": "1.0.0",
+  "description": "收割京东订单列表里的商品名快照，导入两步记账自动补备注。只读本机订单页响应，不碰 Cookie，不上传数据。",
+  "permissions": ["debugger", "tabs", "storage"],
+  "host_permissions": ["*://*.jd.com/*", "*://*.jd.hk/*", "*://*.360buy.com/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html" }
+}

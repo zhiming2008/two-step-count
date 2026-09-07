@@ -1,0 +1,20 @@
+# 依赖与构建产物
+node_modules/
+dist/
+dist-ssr/
+.vite/
+
+# Python 工具环境（tools/ 探查脚本用）
+.venv/
+__pycache__/
+*.pyc
+
+# Tauri / Rust 构建产物
+src-tauri/target/
+src-tauri/gen/schemas
+
+# 本地数据 / 日志
+*.local
+*.log
+npm-debug.log*
+.DS_Store

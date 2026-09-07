@@ -1,0 +1,38 @@
+{
+  "name": "two-step-count",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "两步记账 —— 导入账单自动清账，再逐条补备注",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "dexie": "^4.0.8",
+    "fflate": "^0.8.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "agent-browser": "^0.27.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.45",
+    "puppeteer-core": "^25.10.0",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.3",
+    "vitest": "^2.0.5"
+  }
+}

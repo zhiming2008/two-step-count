@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { width: 340px; font: 13px/1.6 system-ui, 'Microsoft YaHei', sans-serif; margin: 0; padding: 12px; }
+    h1 { font-size: 14px; margin: 0 0 8px; }
+    .stat { background: #f1f5f9; border-radius: 6px; padding: 6px 8px; margin: 8px 0; }
+    .stat.err { background: #fef2f2; color: #b91c1c; }
+    .row { display: flex; gap: 6px; margin: 6px 0; }
+    button { flex: 1; padding: 6px 4px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; }
+    button.warn { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+    button.danger { color: #b91c1c; }
+    .tip { color: #64748b; font-size: 12px; margin: 8px 0 0; }
+    .sec { border-top: 1px dashed #e2e8f0; margin-top: 10px; padding-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>两步记账 · 京东收割</h1>
+  <div class="stat" id="stat">…</div>
+
+  <div class="row">
+    <button id="start" class="warn">开始收割</button>
+    <button id="stop">停止</button>
+  </div>
+  <div class="row"><button id="export">导出订单快照（给两步记账）</button></div>
+
+  <div class="sec">
+    <div class="row"><button id="clear" class="danger">清空本机快照</button></div>
+  </div>
+
+  <p class="tip">
+    用法：开始收割 → 打开 order.jd.com，把订单列表翻到底（每页订单自动收割，已删除的收不到）→ 停止 → 导出 → 在两步记账「设置」里导入。<br />
+    只读订单列表的响应，不碰 Cookie、不发任何请求；数据只存本机。<br />
+    顶部出现「正在调试此浏览器」提示条属正常现象。
+  </p>
+  <script src="popup.js"></script>
+</body>
+</html>
