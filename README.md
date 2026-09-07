@@ -32,6 +32,14 @@
 - 所有数据存在浏览器 IndexedDB（桌面端存在 WebView2 用户目录），**不上传任何数据**
 - 仓库内的测试样本是**脚本生成的合成数据**（`tools/make-sample-fixture.py`），不含任何真实信息
 
+## 下载安装（Windows）
+
+无需装环境，直接下安装包：
+
+👉 [Releases · 两步记账_0.1.0_x64-setup.exe](https://github.com/zhiming2008/two-step-count/releases/latest)
+
+双击安装（装到用户目录，免管理员），开始菜单/桌面生成快捷方式，自带卸载器。
+
 ## 快速开始（网页版）
 
 ```bash
