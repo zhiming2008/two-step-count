@@ -36,7 +36,7 @@
 
 无需装环境，直接下安装包：
 
-👉 [Releases · 两步记账_0.1.0_x64-setup.exe](https://github.com/zhiming2008/two-step-count/releases/latest)
+👉 [Releases · 下载最新版](https://github.com/zhiming2008/two-step-count/releases/latest)（附件名 `TwoStepCount_<版本>_x64-setup.exe`）
 
 双击安装（装到用户目录，免管理员），开始菜单/桌面生成快捷方式，自带卸载器。
 
@@ -55,7 +55,7 @@ npm run dev        # 打开 http://127.0.0.1:5173
 
 ```bash
 npm run tauri:build
-# 产出: src-tauri/target/release/bundle/nsis/两步记账_0.1.0_x64-setup.exe
+# 产出: src-tauri/target/release/bundle/nsis/两步记账_<版本>_x64-setup.exe
 ```
 
 前置：Rust stable-msvc + VS Build Tools（VC++ 工具集 + Windows SDK）。
