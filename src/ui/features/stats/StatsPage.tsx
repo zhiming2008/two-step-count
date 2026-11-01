@@ -7,13 +7,14 @@
  */
 
 import { useMemo, useState } from 'react';
-import type { Cents, Tx } from '../../../core/types';
+import type { Tx } from '../../../core/types';
 import { formatCents } from '../../../core/money';
 import { CATEGORIES } from '../../../core/categories';
 import {
   categoryHex,
   summarizeByCategory,
   summarizeByMonth,
+  summarizeTotals,
   topCounterparties,
   monthlyCategoryMatrix,
 } from '../../../core/query/stats';
@@ -192,16 +193,7 @@ export function StatsPage({ txs }: Props) {
   const stacks = useMemo(() => monthlyCategoryMatrix(scoped), [scoped]);
   const topOut = useMemo(() => topCounterparties(scoped, 8), [scoped]);
 
-  const totals = useMemo(() => {
-    let income = 0 as Cents;
-    let expense = 0 as Cents;
-    for (const t of scoped) {
-      if (t.dropped) continue;
-      if (t.direction === 'in') income += t.effectiveAmount;
-      else if (t.direction === 'out') expense += t.effectiveAmount;
-    }
-    return { income, expense, net: income - expense };
-  }, [scoped]);
+  const totals = useMemo(() => summarizeTotals(scoped), [scoped]);
 
   const avgExpense = months.length > 0 ? Math.round(totals.expense / months.length) : 0;
 
@@ -272,6 +264,10 @@ export function StatsPage({ txs }: Props) {
                 {formatCents(avgExpense)}
               </div>
             </div>
+          </div>
+          <div className="mt-3 text-[11px] text-slate-400">
+            总收支含银行 / 零钱通转账（提现记支出、转入记收入）；下方分类占比只看真实消费，
+            不含转账。
           </div>
         </Block>
 

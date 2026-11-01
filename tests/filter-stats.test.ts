@@ -11,7 +11,8 @@ import {
   yearMonthQuery,
   type YearMonthFilter,
 } from '../src/core/query/filter';
-import { monthlyCategoryMatrix, summarizeByMonth } from '../src/core/query/stats';
+import { monthlyCategoryMatrix, summarizeByCategory, summarizeByMonth, summarizeTotals } from '../src/core/query/stats';
+import { inferInternalFlow, statFlow } from '../src/core/query/flow';
 
 function mkTx(partial: Partial<Tx> & { time: number }): Tx {
   return {
@@ -114,6 +115,82 @@ describe('summarizeByMonth', () => {
     expect(months.map((m) => m.key)).toEqual(['2026-08', '2026-09']);
     expect(months[0].expense).toBe(100);
     expect(months[0].income).toBe(500);
+  });
+});
+
+describe('内部互转的统计口径', () => {
+  it('银行 -> 微信 计收入', () => {
+    expect(inferInternalFlow('转入零钱通-来自工商银行(7928)')).toBe('in');
+    expect(inferInternalFlow('转入零钱-来自招商银行(8146)')).toBe('in');
+  });
+
+  it('提现 / 转出到银行 / 信用卡还款 计支出', () => {
+    expect(inferInternalFlow('零钱提现')).toBe('out');
+    expect(inferInternalFlow('零钱通转出-到招商银行(8146)')).toBe('out');
+    expect(inferInternalFlow('信用卡还款')).toBe('out');
+  });
+
+  it('零钱通 <-> 零钱 内部倒手不计，避免重复', () => {
+    expect(inferInternalFlow('零钱通转出-到零钱')).toBeNull();
+    expect(inferInternalFlow('零钱转出-到零钱通')).toBeNull();
+  });
+
+  it('普通流水沿用收支方向，无关类型不猜方向', () => {
+    expect(statFlow(mkTx({ time: T2026_08 }))).toBe('out');
+    expect(
+      statFlow(mkTx({ time: T2026_08, direction: 'neutral', internal: true, txType: '理财通' })),
+    ).toBeNull();
+  });
+
+  it('月度收支纳入可判定的内部互转', () => {
+    const withdraw = mkTx({
+      time: T2026_08,
+      direction: 'neutral',
+      internal: true,
+      txType: '零钱提现',
+      effectiveAmount: 2000,
+      category: 'transfer',
+    });
+    const fromBank = mkTx({
+      time: T2026_08,
+      direction: 'neutral',
+      internal: true,
+      txType: '转入零钱通-来自招商银行(8146)',
+      effectiveAmount: 5000,
+      category: 'transfer',
+    });
+    const shuffle = mkTx({
+      time: T2026_08,
+      direction: 'neutral',
+      internal: true,
+      txType: '零钱通转出-到零钱',
+      effectiveAmount: 999,
+      category: 'transfer',
+    });
+
+    const months = summarizeByMonth([withdraw, fromBank, shuffle, TXS[0]]);
+    expect(months[0].expense).toBe(2000 + 100);
+    expect(months[0].income).toBe(5000);
+
+    const totals = summarizeTotals([withdraw, fromBank, shuffle, TXS[0]]);
+    expect(totals.expense).toBe(2100);
+    expect(totals.income).toBe(5000);
+    expect(totals.net).toBe(2900);
+  });
+
+  it('分类占比不纳入内部互转（只看真实消费）', () => {
+    const withdraw = mkTx({
+      time: T2026_08,
+      direction: 'neutral',
+      internal: true,
+      txType: '零钱提现',
+      effectiveAmount: 2000,
+      category: 'transfer',
+    });
+
+    expect(summarizeByCategory([withdraw], 'out')).toHaveLength(0);
+    const rows = monthlyCategoryMatrix([withdraw, TXS[0]]);
+    expect(rows[0].total).toBe(100);
   });
 });
 

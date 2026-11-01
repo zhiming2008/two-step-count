@@ -5,6 +5,7 @@
 
 import type { CategoryId, Cents, Direction, Tx } from '../types';
 import { CATEGORIES, getCategory } from '../categories';
+import { statFlow } from './flow';
 
 const CATEGORY_HEX = new Map(CATEGORIES.map((c) => [c.id, c.hex]));
 
@@ -77,14 +78,32 @@ export function summarizeByMonth(txs: Tx[]): MonthSummary[] {
   const buckets = new Map<string, MonthSummary>();
   for (const tx of txs) {
     if (tx.dropped) continue;
+    const flow = statFlow(tx);
+    if (!flow) continue;
     const d = new Date(tx.time);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     const bucket = buckets.get(key) ?? { key, income: 0, expense: 0 };
-    if (tx.direction === 'in') bucket.income += tx.effectiveAmount;
-    else if (tx.direction === 'out') bucket.expense += tx.effectiveAmount;
+    if (flow === 'in') bucket.income += tx.effectiveAmount;
+    else bucket.expense += tx.effectiveAmount;
     buckets.set(key, bucket);
   }
   return [...buckets.values()].sort((a, b) => a.key.localeCompare(b.key));
+}
+
+/**
+ * 总收支（含银行/零钱通转账的可判定流向）。
+ * 分类占比另算：内部互转不进饼图，避免"转账"吞掉真实消费结构。
+ */
+export function summarizeTotals(txs: Tx[]): { income: Cents; expense: Cents; net: Cents } {
+  let income = 0;
+  let expense = 0;
+  for (const tx of txs) {
+    if (tx.dropped) continue;
+    const flow = statFlow(tx);
+    if (flow === 'in') income += tx.effectiveAmount;
+    else if (flow === 'out') expense += tx.effectiveAmount;
+  }
+  return { income, expense, net: income - expense };
 }
 
 /** 月度 × 分类的支出矩阵：堆叠图数据源。按月份升序、分类金额倒序。 */

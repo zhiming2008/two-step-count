@@ -5,6 +5,7 @@
 
 import type { Tx } from '../types';
 import type { TxQuery } from '../../storage/adapter';
+import { statFlow } from './flow';
 
 /** 关键字命中：备注 / 交易对方 / 商品 / 分类备注，忽略大小写。 */
 function matchKeyword(tx: Tx, keyword: string): boolean {
@@ -58,8 +59,10 @@ export function summarizeAmount(txs: Tx[]): AmountSummary {
   let income = 0;
   let expense = 0;
   for (const tx of txs) {
-    if (tx.direction === 'in') income += tx.effectiveAmount;
-    else if (tx.direction === 'out') expense += tx.effectiveAmount;
+    if (tx.dropped) continue;
+    const flow = statFlow(tx);
+    if (flow === 'in') income += tx.effectiveAmount;
+    else if (flow === 'out') expense += tx.effectiveAmount;
   }
   return { income, expense, net: income - expense, count: txs.length };
 }

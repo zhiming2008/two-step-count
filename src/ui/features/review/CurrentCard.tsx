@@ -63,7 +63,7 @@ export function CurrentCard({ tx, suggestion, onSave, onDelete, onPrev, hasPrev 
           )}
           {tx.internal && (
             <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] text-slate-500">
-              内部转账，不计收支
+              内部转账 · 计入总收支
             </span>
           )}
         </div>
