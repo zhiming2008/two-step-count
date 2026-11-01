@@ -1,7 +1,7 @@
 {
   "name": "two-step-count",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "两步记账 —— 导入账单自动清账，再逐条补备注",
   "scripts": {

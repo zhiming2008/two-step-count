@@ -1,6 +1,6 @@
 [package]
 name = "two-step-count"
-version = "0.1.0"
+version = "0.1.1"
 description = "两步记账 - 导入微信账单，补个备注"
 authors = ["zhiming2008"]
 edition = "2021"
